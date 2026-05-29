@@ -45,22 +45,28 @@ Esta es una landing page de presentación comercial y portafolio interactivo pen
 
 ---
 
-## Mejores siguientes pasos
+## Siguientes pasos
 1. **Seguridad**: Agregar autenticación con contraseña o login de Supabase Auth para restringir el acceso a la pestaña de Inventario a administradores autorizados.
 2. **Pasarela de pago**: Integrar una pasarela para automatizar cobros antes de confirmar el pedido.
 3. **Personalización**: Añadir campos para seleccionar talla, tipo de copa, color o accesorios (cintas, plumas) en la ficha del producto.
 4. **Optimización de Medios**: Migrar las imágenes del catálogo a Supabase Storage para un renderizado óptimo en móviles.
 5. **Animaciones**: Incorporar efectos de transición adicionales al pasar el mouse por las tarjetas del catálogo.
+6. **Blog**: Agregar un blog para compartir historias y noticias relacionadas con la sombrerería.
+7. **SEO**: Optimizar el sitio para motores de búsqueda.
+8. **Despliegue** la página en un hosting gratuito, vercel para pruebas de paginas estaticas. No he probado con supabase.          
+9. **Redes Sociales**: Agregar enlaces a redes sociales.
+10. **Idioma**: Agregar un botón para cambiar el idioma del sitio web.
+11. **Chat en vivo**: Agregar un chat en vivo para que los clientes puedan hacer preguntas en tiempo real.
 
 ---
 
 ## Despliegue
-La aplicación se puede desplegar en Vercel. Se actualiza con cada nuevo commit que se vaya generando con estos pasos básicos:
+La aplicación está lista para ser desplegada en plataformas como **Vercel**. El despliegue automático se puede configurar para actualizarse con cada commit en la rama `main`:
 
-- Detecta que es un proyecto Vite
-- Ejecuta `npm run build`
-- Genera los archivos en la carpeta `dist/`
-- Sirve la app en producción
+1. Detecta que es un proyecto Vite.
+2. Ejecuta `npm run build`.
+3. Genera los archivos listos para producción en la carpeta `dist/`.
+4. Sirve la app.
 
 ### Comandos locales básicos:
 ```bash
