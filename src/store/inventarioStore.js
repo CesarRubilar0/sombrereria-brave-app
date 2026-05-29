@@ -1,21 +1,72 @@
 import { create } from 'zustand'
-import { productsService, ordersService, orderDetailsService } from '../services/supabase'
 
 // ============================================================
-// STORE DE INVENTARIO CON SUPABASE
+// DATOS INICIALES DE DEMOSTRACIÓN CON FOTOS DE UNSPLASH
 // ============================================================
+const DEFAULT_PRODUCTS = [
+  {
+    id: 'prod-1',
+    nombre: 'Sombrero Vaquero Cuero Crupón',
+    descripcion: 'Sombrero estilo cowboy fabricado en cuero crupón de alta resistencia. Ideal para el aire libre.',
+    precio: 59900,
+    categoria: 'Hombre - Otoño/Invierno',
+    stock: 8,
+    imagen_url: 'https://images.unsplash.com/photo-1533681904393-9ab6efe7870f?q=80&w=400&auto=format&fit=crop'
+  },
+  {
+    id: 'prod-2',
+    nombre: 'Boina Comando Lana Merino',
+    descripcion: 'Tradicional boina militar comando en lana merino negra. Ajuste perfecto y abrigo superior.',
+    precio: 34900,
+    categoria: 'Hombre - Otoño/Invierno',
+    stock: 12,
+    imagen_url: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?q=80&w=400&auto=format&fit=crop'
+  },
+  {
+    id: 'prod-3',
+    nombre: 'Sombrero Huaso Fieltro Pelo',
+    descripcion: 'Sombrero tradicional de huaso chileno fabricado en fieltro de pelo de liebre. Acabado extra fino.',
+    precio: 120000,
+    categoria: 'Hombre - Otoño/Invierno',
+    stock: 5,
+    imagen_url: 'https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?q=80&w=400&auto=format&fit=crop'
+  },
+  {
+    id: 'prod-4',
+    nombre: 'Pamela Dama Ala Ancha',
+    descripcion: 'Elegante sombrero de sol para mujer con ala ancha. Adornado con cinta de cuero sutil.',
+    precio: 45900,
+    categoria: 'Mujer',
+    stock: 6,
+    imagen_url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=400&auto=format&fit=crop'
+  },
+  {
+    id: 'prod-5',
+    nombre: 'Sombrero Chupalla Huasa Especial',
+    descripcion: 'Chupalla chilena de paja de trigo tejida a mano de 4 hebras. Tradición del campo chileno.',
+    precio: 79900,
+    categoria: 'Hombre - Primavera/Verano',
+    stock: 4,
+    imagen_url: 'https://images.unsplash.com/photo-1595959183075-c1d09e57091c?q=80&w=400&auto=format&fit=crop'
+  }
+];
 
+const DEFAULT_MATERIALS = [
+  { id: 'mat-1', nombre: 'Paño de lana', stock: 15, unidad: 'unidades' },
+  { id: 'mat-2', nombre: 'Cintas de cuero', stock: 50, unidad: 'metros' },
+  { id: 'mat-3', nombre: 'Forros de seda', stock: 25, unidad: 'metros' }
+];
+
+// ============================================================
+// STORE DE INVENTARIO CON BASE LOCAL (ZUSTAND + LOCALSTORAGE)
+// ============================================================
 export const useInventarioStore = create((set, get) => ({
-  // ============================================================
   // ESTADO - PRODUCTOS
-  // ============================================================
-  productos: [],
+  productos: JSON.parse(localStorage.getItem('local_productos')) || DEFAULT_PRODUCTS,
   loading: false,
   error: null,
 
-  // ============================================================
   // ESTADO - CARRITO
-  // ============================================================
   carrito: [],
   clienteInfo: {
     nombre: '',
@@ -25,94 +76,143 @@ export const useInventarioStore = create((set, get) => ({
     metodoPago: 'efectivo' // 'efectivo', 'transferencia', 'tarjeta'
   },
 
-  // ============================================================
   // ESTADO - PEDIDOS
-  // ============================================================
-  pedidos: [],
+  pedidos: JSON.parse(localStorage.getItem('local_pedidos')) || [],
   pedidoActual: null,
 
-  // ============================================================
+  // ESTADO - MATERIAS PRIMAS
+  materiales: JSON.parse(localStorage.getItem('local_materiales')) || DEFAULT_MATERIALS,
+
   // ESTADO - AUTENTICACIÓN
-  // ============================================================
   isAdminAuthenticated: localStorage.getItem('admin_auth') === 'true',
 
   // ============================================================
-  // ACCIONES - PRODUCTOS
+  // ACCIONES - PRODUCTOS (100% LOCALES)
   // ============================================================
 
-  // Cargar productos desde Supabase
+  // Cargar productos
   loadProductos: async () => {
     set({ loading: true, error: null })
     try {
-      const { data, error } = await productsService.getAll()
-      if (error) throw error
-      set({ productos: data || [], loading: false })
+      const local = localStorage.getItem('local_productos')
+      if (!local) {
+        localStorage.setItem('local_productos', JSON.stringify(DEFAULT_PRODUCTS))
+        set({ productos: DEFAULT_PRODUCTS })
+      } else {
+        set({ productos: JSON.parse(local) })
+      }
+      set({ loading: false })
       return { success: true }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al cargar productos:', error)
       return { success: false, error: error.message }
     }
   },
 
-  // Crear producto (solo admin)
+  // Crear/Agregar producto (Zustand Local)
   addProducto: async (producto) => {
     set({ loading: true, error: null })
     try {
-      const { data, error } = await productsService.create(producto)
-      if (error) throw error
+      await new Promise((resolve) => setTimeout(resolve, 400))
       
-      set((state) => ({
-        productos: [data, ...state.productos],
-        loading: false
-      }))
-      return { success: true, data }
+      const { productos } = get()
+      const nuevoProducto = {
+        id: 'prod-' + Date.now(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        ...producto
+      }
+      
+      const nuevosProductos = [nuevoProducto, ...productos]
+      localStorage.setItem('local_productos', JSON.stringify(nuevosProductos))
+      
+      set({ productos: nuevosProductos, loading: false })
+      return { success: true, data: nuevoProducto }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al crear producto:', error)
       return { success: false, error: error.message }
     }
   },
 
-  // Actualizar producto (solo admin)
+  // Alias para agregarProducto
+  agregarProducto: (producto) => get().addProducto(producto),
+
+  // Actualizar/Editar producto (Zustand Local)
   updateProducto: async (id, updates) => {
     set({ loading: true, error: null })
     try {
-      const { data, error } = await productsService.update(id, updates)
-      if (error) throw error
+      await new Promise((resolve) => setTimeout(resolve, 200))
       
-      set((state) => ({
-        productos: state.productos.map((p) =>
-          p.id === id ? data : p
-        ),
-        loading: false
-      }))
-      return { success: true, data }
+      const { productos } = get()
+      const nuevosProductos = productos.map((p) =>
+        p.id === id ? { ...p, ...updates, updated_at: new Date().toISOString() } : p
+      )
+      
+      localStorage.setItem('local_productos', JSON.stringify(nuevosProductos))
+      
+      set({ productos: nuevosProductos, loading: false })
+      const updated = nuevosProductos.find(p => p.id === id)
+      return { success: true, data: updated }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al actualizar producto:', error)
       return { success: false, error: error.message }
     }
   },
 
-  // Eliminar producto (solo admin)
+  // Alias para editarProducto
+  editarProducto: (id, updates) => get().updateProducto(id, updates),
+
+  // Eliminar producto (Zustand Local)
   deleteProducto: async (id) => {
     set({ loading: true, error: null })
     try {
-      const { success, error } = await productsService.delete(id)
-      if (error) throw error
+      await new Promise((resolve) => setTimeout(resolve, 200))
       
-      set((state) => ({
-        productos: state.productos.filter((p) => p.id !== id),
-        loading: false
-      }))
+      const { productos } = get()
+      const nuevosProductos = productos.filter((p) => p.id !== id)
+      
+      localStorage.setItem('local_productos', JSON.stringify(nuevosProductos))
+      
+      set({ productos: nuevosProductos, loading: false })
       return { success: true }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al eliminar producto:', error)
       return { success: false, error: error.message }
     }
   },
+
+  // Alias para eliminarProducto
+  eliminarProducto: (id) => get().deleteProducto(id),
+
+  // ============================================================
+  // ACCIONES - MATERIAS PRIMAS (100% LOCALES)
+  // ============================================================
+
+  // Cargar materiales
+  loadMateriales: () => {
+    const local = localStorage.getItem('local_materiales')
+    if (local) {
+      set({ materiales: JSON.parse(local) })
+    } else {
+      localStorage.setItem('local_materiales', JSON.stringify(DEFAULT_MATERIALS))
+      set({ materiales: DEFAULT_MATERIALS })
+    }
+  },
+
+  // Actualizar cantidad de material
+  updateMaterialStock: (id, newStock) => {
+    const { materiales } = get()
+    const nuevosMateriales = materiales.map((m) =>
+      m.id === id ? { ...m, stock: Math.max(0, newStock) } : m
+    )
+    
+    localStorage.setItem('local_materiales', JSON.stringify(nuevosMateriales))
+    set({ materiales: nuevosMateriales })
+    return { success: true }
+  },
+
+  // Alias para actualizarStockMaterial
+  actualizarStockMaterial: (id, newStock) => get().updateMaterialStock(id, newStock),
 
   // ============================================================
   // ACCIONES - CARRITO
@@ -195,14 +295,14 @@ export const useInventarioStore = create((set, get) => ({
   },
 
   // ============================================================
-  // ACCIONES - PEDIDOS
+  // ACCIONES - PEDIDOS (100% LOCALES)
   // ============================================================
 
   // Crear pedido
   crearPedido: async () => {
     set({ loading: true, error: null })
     try {
-      const { carrito, clienteInfo, getTotal } = get()
+      const { carrito, clienteInfo, getTotal, pedidos } = get()
       
       if (carrito.length === 0) {
         throw new Error('El carrito está vacío')
@@ -215,56 +315,58 @@ export const useInventarioStore = create((set, get) => ({
       const total = getTotal()
       
       // Crear pedido
-      const { data: pedido, error: errorPedido } = await ordersService.create({
+      const nuevoPedido = {
+        id: 'order-' + Date.now(),
         nombre_cliente: clienteInfo.nombre,
         correo: clienteInfo.correo,
         telefono: clienteInfo.telefono,
         tipo_entrega: clienteInfo.tipoEntrega,
         metodo_pago: clienteInfo.metodoPago,
         total: total,
-        estado: 'pendiente'
+        estado: 'pendiente',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+      
+      const nuevosPedidos = [nuevoPedido, ...pedidos]
+      localStorage.setItem('local_pedidos', JSON.stringify(nuevosPedidos))
+      
+      // Descontar stock localmente para cada sombrero comprado
+      const { productos } = get()
+      const nuevosProductos = productos.map(prod => {
+        const itemEnCarrito = carrito.find(c => c.id === prod.id)
+        if (itemEnCarrito) {
+          return { ...prod, stock: Math.max(0, prod.stock - itemEnCarrito.cantidad) }
+        }
+        return prod
       })
+      localStorage.setItem('local_productos', JSON.stringify(nuevosProductos))
       
-      if (errorPedido) throw errorPedido
-      
-      // Crear detalles del pedido
-      const detalles = carrito.map((item) => ({
-        pedido_id: pedido.id,
-        producto_id: item.id,
-        cantidad: item.cantidad,
-        precio_unitario: item.precio
-      }))
-      
-      const { error: errorDetalles } = await orderDetailsService.createMany(detalles)
-      if (errorDetalles) throw errorDetalles
-      
-      // Actualizar estado
-      set((state) => ({
-        pedidos: [pedido, ...state.pedidos],
-        pedidoActual: pedido,
+      set({
+        pedidos: nuevosPedidos,
+        pedidoActual: nuevoPedido,
+        productos: nuevosProductos,
         carrito: [],
         loading: false
-      }))
+      })
       
-      return { success: true, pedido }
+      return { success: true, pedido: nuevoPedido }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al crear pedido:', error)
       return { success: false, error: error.message }
     }
   },
 
-  // Cargar pedidos (solo admin)
+  // Cargar pedidos
   loadPedidos: async () => {
     set({ loading: true, error: null })
     try {
-      const { data, error } = await ordersService.getAll()
-      if (error) throw error
-      set({ pedidos: data || [], loading: false })
+      const local = localStorage.getItem('local_pedidos')
+      const data = local ? JSON.parse(local) : []
+      set({ pedidos: data, loading: false })
       return { success: true }
     } catch (error) {
       set({ error: error.message, loading: false })
-      console.error('❌ Error al cargar pedidos:', error)
       return { success: false, error: error.message }
     }
   },
@@ -289,25 +391,24 @@ export const useInventarioStore = create((set, get) => ({
     })
   },
 
-  // Acción: Iniciar sesión de Administrador (Local)
+  // Iniciar sesión de Administrador (Local)
   loginAdmin: async (email, password) => {
     set({ loading: true, error: null })
-    // Simular un pequeño retardo de red para mejor UX (efecto premium)
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800))
     
     if (email === 'admin@sombrerosbrave.cl' && password === 'brave2026') {
-      localStorage.setItem('admin_auth', 'true');
-      set({ isAdminAuthenticated: true, loading: false });
-      return { success: true };
+      localStorage.setItem('admin_auth', 'true')
+      set({ isAdminAuthenticated: true, loading: false })
+      return { success: true }
     } else {
-      set({ loading: false, error: 'Credenciales de administrador inválidas.' });
-      return { success: false, error: 'Credenciales de administrador inválidas.' };
+      set({ loading: false, error: 'Credenciales de administrador inválidas.' })
+      return { success: false, error: 'Credenciales de administrador inválidas.' }
     }
   },
 
-  // Acción: Cerrar sesión de Administrador
+  // Cerrar sesión de Administrador
   logoutAdmin: () => {
-    localStorage.removeItem('admin_auth');
-    set({ isAdminAuthenticated: false });
+    localStorage.removeItem('admin_auth')
+    set({ isAdminAuthenticated: false })
   }
 }))

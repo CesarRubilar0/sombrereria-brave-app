@@ -28,9 +28,13 @@ export default function Navbar() {
           <li className="nav-item"><Link to="/contacto">CONTACTO</Link></li>
           
           {/* ENLACE CONDICIONAL DE INVENTARIO PARA ADMIN */}
-          {isAdminAuthenticated && (
+          {isAdminAuthenticated ? (
             <li className="nav-item admin-item">
               <Link to="/inventario" className="nav-admin-link">⚙️ INVENTARIO</Link>
+            </li>
+          ) : (
+            <li className="nav-item login-item">
+              <Link to="/login" className="nav-login-link">ADMIN</Link>
             </li>
           )}
         </ul>
