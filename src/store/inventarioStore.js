@@ -32,6 +32,11 @@ export const useInventarioStore = create((set, get) => ({
   pedidoActual: null,
 
   // ============================================================
+  // ESTADO - AUTENTICACIÓN
+  // ============================================================
+  isAdminAuthenticated: localStorage.getItem('admin_auth') === 'true',
+
+  // ============================================================
   // ACCIONES - PRODUCTOS
   // ============================================================
 
@@ -282,5 +287,27 @@ export const useInventarioStore = create((set, get) => ({
       pedidoActual: null,
       error: null
     })
+  },
+
+  // Acción: Iniciar sesión de Administrador (Local)
+  loginAdmin: async (email, password) => {
+    set({ loading: true, error: null })
+    // Simular un pequeño retardo de red para mejor UX (efecto premium)
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    
+    if (email === 'admin@sombrerosbrave.cl' && password === 'brave2026') {
+      localStorage.setItem('admin_auth', 'true');
+      set({ isAdminAuthenticated: true, loading: false });
+      return { success: true };
+    } else {
+      set({ loading: false, error: 'Credenciales de administrador inválidas.' });
+      return { success: false, error: 'Credenciales de administrador inválidas.' };
+    }
+  },
+
+  // Acción: Cerrar sesión de Administrador
+  logoutAdmin: () => {
+    localStorage.removeItem('admin_auth');
+    set({ isAdminAuthenticated: false });
   }
 }))

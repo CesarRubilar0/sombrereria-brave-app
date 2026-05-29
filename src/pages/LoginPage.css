@@ -1,0 +1,206 @@
+/* --- LOG IN PAGE DESIGN --- */
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+  background: radial-gradient(circle at 50% 50%, #FAF6F0 0%, #F3EAE0 100%);
+}
+
+.login-card {
+  background-color: #ffffff;
+  border-radius: var(--border-radius-lg, 20px);
+  box-shadow: var(--shadow-premium, 0 20px 40px rgba(44, 30, 21, 0.06));
+  border: 1px solid rgba(139, 94, 60, 0.1);
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 440px;
+  animation: loginCardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-logo-emoji {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.login-header h2 {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 26px;
+  color: var(--color-leather-dark, #3E2514);
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.login-header p {
+  font-size: 14px;
+  color: var(--color-text-medium, #5A4A3F);
+  margin: 0;
+}
+
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-leather-dark, #3E2514);
+  letter-spacing: 0.02em;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 1px solid #dcd3cb;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  font-family: var(--font-sans, sans-serif);
+  transition: all 0.3s;
+  background-color: #fafafa;
+}
+
+.form-group input:focus {
+  border-color: var(--color-honey, #d4a373);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
+}
+
+.form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  border-color: #e5e5e5;
+}
+
+/* Botón de Entrada */
+.btn-login-submit {
+  background-color: var(--color-leather-medium, #704523);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth, all 0.3s);
+  box-shadow: 0 8px 16px rgba(112, 69, 35, 0.15);
+  margin-top: 10px;
+}
+
+.btn-login-submit:hover:not(:disabled) {
+  background-color: var(--color-leather-dark, #3E2514);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(62, 37, 20, 0.25);
+}
+
+.btn-login-submit:active {
+  transform: translateY(0);
+}
+
+.btn-login-submit:disabled {
+  background-color: #cbb9ad;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Spinner animado */
+.login-spinner-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: loginSpin 0.8s linear infinite;
+}
+
+/* Alerta de Error */
+.login-error-alert {
+  background-color: #fdf2f2;
+  color: #c81e1e;
+  border: 1px solid #fde8e8;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.4;
+  animation: loginAlertShake 0.4s ease;
+}
+
+.alert-icon {
+  font-size: 16px;
+}
+
+/* Footer de la tarjeta */
+.login-card-footer {
+  text-align: center;
+  margin-top: 30px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 20px;
+}
+
+.login-card-footer p {
+  font-size: 11px;
+  color: var(--color-text-muted, #A39385);
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes loginCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loginSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loginAlertShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px;
+  }
+  
+  .login-header h2 {
+    font-size: 22px;
+  }
+}

@@ -1,12 +1,20 @@
-import { Link } from 'react-router-dom'
-import './Navbar.css'
+import { Link, useNavigate } from 'react-router-dom'
 import { useInventarioStore } from '../store/inventarioStore'
+import './Navbar.css'
 
 export default function Navbar() {
   const carrito = useInventarioStore((state) => state.carrito)
+  const isAdminAuthenticated = useInventarioStore((state) => state.isAdminAuthenticated)
+  const logoutAdmin = useInventarioStore((state) => state.logoutAdmin)
+  const navigate = useNavigate()
 
   const cartCount = carrito.reduce((sum, item) => sum + (item.cantidad || item.cantidad === 0 ? item.cantidad : item.quantity || 1), 0)
   const total = carrito.reduce((sum, item) => sum + (item.precio || 0) * (item.cantidad || item.quantity || 1), 0)
+
+  const handleLogout = () => {
+    logoutAdmin()
+    navigate('/')
+  }
 
   return (
     <nav className="navbar artisan-navbar">
@@ -18,10 +26,24 @@ export default function Navbar() {
           <li className="nav-item"><Link to="/nosotros">NOSOTROS</Link></li>
           <li className="nav-item"><Link to="/catalogo">CATÁLOGO</Link></li>
           <li className="nav-item"><Link to="/contacto">CONTACTO</Link></li>
+          
+          {/* ENLACE CONDICIONAL DE INVENTARIO PARA ADMIN */}
+          {isAdminAuthenticated && (
+            <li className="nav-item admin-item">
+              <Link to="/inventario" className="nav-admin-link">⚙️ INVENTARIO</Link>
+            </li>
+          )}
         </ul>
       </div>
 
       <div className="nav-right">
+        {/* BOTÓN CONDICIONAL DE LOGOUT PARA ADMIN */}
+        {isAdminAuthenticated && (
+          <button onClick={handleLogout} className="btn-navbar-logout" title="Cerrar sesión de administrador">
+            SALIR ADMIN
+          </button>
+        )}
+
         <div className="cart-text">CARRITO / ${total.toFixed(2)}</div>
 
         <Link to="/cart" className="icon-button cart-button" aria-label="Carrito">
@@ -42,4 +64,3 @@ export default function Navbar() {
     </nav>
   )
 }
-
