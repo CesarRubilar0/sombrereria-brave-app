@@ -2,6 +2,23 @@ import { useState } from 'react'
 import { useInventarioStore } from '../store/inventarioStore'
 import './ProductCard.css'
 
+// Helper para clasificar dinámicamente los sombreros por género/categoría
+const obtenerCategoria = (producto) => {
+  const nombre = (producto.nombre || '').toLowerCase();
+  const desc = (producto.descripcion || '').toLowerCase();
+  
+  if (nombre.includes('niño') || nombre.includes('niña') || desc.includes('niño') || desc.includes('niña') || nombre.includes('infantil')) {
+    return 'NIÑOS';
+  }
+  if (nombre.includes('mujer') || nombre.includes('dama') || desc.includes('dama') || nombre.includes('pamela') || nombre.includes('capelina') || nombre.includes('cinta')) {
+    return 'MUJER';
+  }
+  if (nombre.includes('hombre') || nombre.includes('caballero') || nombre.includes('boina') || nombre.includes('huaso') || nombre.includes('chupalla') || nombre.includes('comando') || nombre.includes('fedora') || nombre.includes('vaquero') || nombre.includes('panama')) {
+    return 'HOMBRE';
+  }
+  return 'UNISEX';
+};
+
 function ProductCard({ producto, isAdmin = false }) {
   const [editingStock, setEditingStock] = useState(false)
   const [newStock, setNewStock] = useState(producto.stock || 0)
@@ -18,80 +35,94 @@ function ProductCard({ producto, isAdmin = false }) {
     }
   }
 
+  // Formateador de moneda chilena (CLP)
+  const formatearPrecio = (valor) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+    }).format(valor);
+  };
+
   return (
     <div className="product-card">
-      {producto.imagen_url && (
-        <div className="product-image">
-          <img src={producto.imagen_url} alt={producto.nombre} />
-        </div>
-      )}
-
-      <div className="product-header">
-        <h3>{producto.nombre}</h3>
+      <div className="product-image-container">
+        {producto.imagen_url ? (
+          <img src={producto.imagen_url} alt={producto.nombre} className="product-image" />
+        ) : (
+          <div className="product-image-placeholder">
+            <span>🎩</span>
+          </div>
+        )}
+        
+        {/* Botón de eliminar en modo admin */}
         {isAdmin && (
           <button
-            className="btn-delete"
+            className="btn-admin-delete"
             onClick={handleDelete}
-            title="Eliminar"
+            title="Eliminar producto"
           >
-            🗑️
+            ✕
           </button>
         )}
       </div>
 
-      <div className="product-body">
+      <div className="product-details">
+        {/* Género/Categoría arriba en gris y pequeño */}
+        <span className="product-gender">{obtenerCategoria(producto)}</span>
+        
+        {/* Nombre en tipografía oscura */}
+        <h3 className="product-name">{producto.nombre}</h3>
+        
+        {/* Precio destacado en negrita y formato CLP */}
+        <p className="product-price">{formatearPrecio(producto.precio)}</p>
+
+        {/* Descripción sutil */}
         {producto.descripcion && (
-          <p className="description">{producto.descripcion}</p>
+          <p className="product-description-sutil">{producto.descripcion}</p>
         )}
 
-        <div className="product-info">
-          <div className="info-item">
-            <span className="info-label">Precio:</span>
-            <span className="info-value">${producto.precio.toFixed(2)}</span>
-          </div>
-          <div className="info-item">
-            <span className="info-label">Stock:</span>
-            <span className={`info-value ${producto.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-              {producto.stock || 0}
-            </span>
-          </div>
+        {/* Indicador de stock sutil */}
+        <div className="product-stock-status">
+          <span>Stock: </span>
+          <span className={producto.stock > 0 ? 'stock-in' : 'stock-out'}>
+            {producto.stock > 0 ? `${producto.stock} uds.` : 'Agotado'}
+          </span>
         </div>
-
-        {producto.created_at && (
-          <p className="date">Creado: {new Date(producto.created_at).toLocaleDateString('es-AR')}</p>
-        )}
       </div>
 
-      <div className="product-actions">
+      {/* Botón rectangular blanco con borde negro para cliente, o editor de stock para admin */}
+      <div className="product-card-footer">
         {isAdmin ? (
-          <>
+          <div className="admin-actions-container">
             {editingStock ? (
-              <div className="stock-editor">
+              <div className="stock-editor-controls">
                 <input
                   type="number"
                   value={newStock}
                   onChange={(e) => setNewStock(e.target.value)}
                   min="0"
+                  className="stock-editor-input"
                 />
-                <button onClick={handleUpdateStock} className="btn-save">✓</button>
-                <button onClick={() => setEditingStock(false)} className="btn-cancel">✕</button>
+                <button onClick={handleUpdateStock} className="btn-stock-save">✓</button>
+                <button onClick={() => setEditingStock(false)} className="btn-stock-cancel">✕</button>
               </div>
             ) : (
               <button
-                className="btn-edit"
+                className="btn-admin-edit"
                 onClick={() => setEditingStock(true)}
               >
-                ✏️ Editar Stock
+                Editar Stock
               </button>
             )}
-          </>
+          </div>
         ) : (
           <button
-            className="btn-add-cart"
+            className="btn-add-to-cart"
             onClick={() => agregarAlCarrito(producto, 1)}
             disabled={producto.stock <= 0}
           >
-            🛒 Agregar al Carrito
+            {producto.stock > 0 ? 'AGREGAR AL CARRITO' : 'AGOTADO'}
           </button>
         )}
       </div>
