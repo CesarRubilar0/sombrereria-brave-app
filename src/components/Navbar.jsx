@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <nav className="navbar artisan-navbar">
       <div className="nav-left">
-        <Link to="/" className="nav-logo">🎩 Sombrerería Brave</Link>
+        <Link to="/" className="nav-logo">Sombrerería Brave</Link>
 
         <ul className="nav-links">
           <li className="nav-item"><Link to="/">HOME</Link></li>

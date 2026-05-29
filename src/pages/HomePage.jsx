@@ -19,7 +19,6 @@ export default function HomePage() {
       <header className="hero-section">
         <div className="hero-content">
           <div className="hero-badge">
-            <span className="badge-icon">🎩</span>
             <span>Tradición Hecha a Mano</span>
           </div>
           <h1>
@@ -100,7 +99,7 @@ export default function HomePage() {
         <div className="footer-top">
           {/* Columna 1: Información de marca */}
           <div className="footer-brand">
-            <div className="footer-logo">🎩 Sombrerería Brave</div>
+            <div className="footer-logo">Sombrerería Brave</div>
             <p className="footer-tagline">
               "No queremos perder la tradición del sombrero". Diseños artesanales chilenos creados con pasión y cuero de la mejor calidad.
             </p>
