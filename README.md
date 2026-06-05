@@ -1,11 +1,11 @@
 # Sombrerería Brave - React
 
-Sitio web de presentación y gestión para **Sombrerería Brave**, una sombrerería artesanal chilena. La página muestra piezas destacadas (catálogo), un reportaje en Canal 13, contacto directo por WhatsApp y un panel de gestión de inventario.
+Sitio web de presentación y gestión para **Sombrerería Brave**, una sombrerería artesanal chilena. La página muestra piezas destacadas (catálogo), un reportaje en Canal 13, contacto directo p[...]
 
 ---
 
 ## Qué es esta página
-Esta es una landing page de presentación comercial y portafolio interactivo pensada para exhibir el catálogo de sombreros de cuero y fieltro hechos a mano, con un enfoque en la estética tradicional, el proceso creativo y el contacto rápido con los clientes a través de WhatsApp. Además, incluye un panel integrado para que el administrador pueda gestionar el stock y revisar pedidos entrantes.
+Esta es una landing page de presentación comercial y portafolio interactivo pensada para exhibir el catálogo de sombreros de cuero y fieltro hechos a mano, con un enfoque en la estética tradicio[...]
 
 ---
 
@@ -42,6 +42,15 @@ Esta es una landing page de presentación comercial y portafolio interactivo pen
 - `src/pages/` — páginas del sitio (`HomePage`, `CatalogoPage`, `NosotrosPage`, `ContactoPage`, `CartPage`, `CheckoutPage`, `InventarioPage`).
 - `src/store/inventarioStore.js` — estado global de la tienda, carrito de compras y acciones de Supabase.
 - `src/services/supabase.js` — cliente y métodos de persistencia para productos y pedidos.
+
+---
+
+## Mejoras Propuestas
+1. **Bandeja de Incorporación de Nuevos Productos** — Implementar un panel intuitivo para agregar, editar y revisar nuevos productos antes de publicarlos en el catálogo principal.
+2. **Rate-Limit en Solicitudes de Clientes** — Reforzar las restricciones de velocidad en las solicitudes de clientes para evitar abuso y mejorar la estabilidad del servicio.
+3. **Incorporación de Correo Empresarial** — Integrar un sistema de correo corporativo para enviar confirmaciones de pedidos, actualizaciones de inventario y comunicaciones con clientes.
+4. **Bot de Atención** — Desarrollar un bot inteligente para responder consultas frecuentes, asistir en el proceso de compra y mejorar la experiencia del usuario.
+5. **Integración de Número de Contacto** — Añadir un sistema de contacto directo por WhatsApp/Teléfono con opciones de atención automática y manual.
 
 ---
 
@@ -83,6 +92,6 @@ npm run build
 ---
 
 ## Enfoque de Desarrollo y Visión de Proyecto
-Este proyecto se realiza de manera práctica y sencilla, buscando una fluidez que apoye directamente al posicionamiento de talleres locales y PYMEs en general, impulsando su transformación digital sin fricciones.
+Este proyecto se realiza de manera práctica y sencilla, buscando una fluidez que apoye directamente al posicionamiento de talleres locales y PYMEs en general, impulsando su transformación digita[...]
 
 Este README documenta una primera versión funcional, pensada para crecer y adaptarse según las necesidades de la sombrerería y su presencia en línea.
